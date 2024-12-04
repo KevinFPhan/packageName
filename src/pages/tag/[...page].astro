@@ -1,0 +1,211 @@
+---
+import Config from 'virtual:package-name/user-config';
+import { Layout } from 'virtual:package-name/components';
+import { getCollection, getEntry } from 'astro:content';
+import SquareCard from '../../components/blog/SquareCard.astro';
+import type { Page } from 'astro';
+import { getArticles } from '../../utils/routing';
+
+export async function getStaticPaths({ paginate }: { paginate: Function }) {
+	const { paginateSize } = Config;
+	const tags: Record<string, any> = {};
+	const articles = await getArticles();
+
+	articles.forEach((data) => {
+		if (Array.isArray(data.tags)) {
+			data.tags.forEach((tag) => {
+				tags[tag.toString()] = true;
+			});
+		}
+	});
+
+	return Object.keys(tags).flatMap((tag) => {
+		const filteredArticles = articles.filter((data) => data.tags.includes(tag));
+		return paginate(filteredArticles, {
+			params: { tag },
+			pageSize: paginateSize,
+		});
+	});
+}
+
+const tag = Astro.params.tag ?? '';
+
+const { page }: { page: Page } = Astro.props as { page: Page };
+
+
+const title = tag ? tag[0].toLowerCase() + tag.slice(1) : '';
+
+page.title = tag ? tag[0].toUpperCase() + tag.slice(1) : '';
+page.description = '';
+
+const pagination = Astro.props.page;
+const filteredPosts = pagination.data;
+
+
+function generatePageLinks(
+	totalPages: number,
+	currentPage: number
+): Array<number | string> {
+	const maxPageNumbersToShow = 5;
+	const pageLinks: Array<number | string> = [];
+
+	if (totalPages <= maxPageNumbersToShow) {
+		// Show all pages
+		for (let i = 1; i <= totalPages; i++) {
+			pageLinks.push(i);
+		}
+	} else {
+		// Always show first page
+		pageLinks.push(1);
+
+		if (currentPage <= 3) {
+			// Show first 4 pages and ellipsis, then last page
+			for (let i = 2; i <= 4; i++) {
+				pageLinks.push(i);
+			}
+			pageLinks.push('...');
+			pageLinks.push(totalPages);
+		} else if (currentPage >= totalPages - 2) {
+			// Show first page, ellipsis, and last 4 pages
+			pageLinks.push('...');
+			for (let i = totalPages - 3; i <= totalPages; i++) {
+				pageLinks.push(i);
+			}
+		} else {
+			// Show first page, ellipsis, current page -1, current page, current page +1, ellipsis, last page
+			pageLinks.push('...');
+			pageLinks.push(currentPage - 1);
+			pageLinks.push(currentPage);
+			pageLinks.push(currentPage + 1);
+			pageLinks.push('...');
+			pageLinks.push(totalPages);
+		}
+	}
+
+	// Ensure uniqueness
+	return Array.from(new Set(pageLinks));
+}
+
+const currentPage = page.currentPage;
+const totalPages = Math.ceil(page.total / page.size);
+const pageLinks = generatePageLinks(totalPages, currentPage);
+---
+
+<Layout
+	title={page.title}
+	seo={page.seo}
+	page_size={page.page_size}
+	config={Config}
+>
+	<div class="relative z-[10] m-auto mt-[100px] max-w-7xl px-5 py-[96px]">
+		<section class="blog-index mx-auto grid grid-cols-3 gap-10">
+			<h1 class="col-span-full text-center">Blogs</h1>
+			<div class="fade-in-up col-span-full">
+				<h3 class="mb-5">
+					Tags:
+					<span
+						class="rounded-md bg-primary-500 px-4 py-1 text-2xl font-medium text-gray-900 dark:bg-primary-300 xl:text-3xl"
+					>
+						{page.title}
+					</span>
+				</h3>
+				<a href="/blog/">
+					<button
+						class="rounded-lg text-xl underline transition-all duration-100 ease-out hover:text-primary-700"
+					>
+						See All Blogs
+					</button>
+				</a>
+			</div>
+			{
+				filteredPosts.map((article) => (
+					<SquareCard
+						article={article}
+						time={article.remarkPluginFrontmatter.readingTime}
+						word={article.remarkPluginFrontmatter.totalCharCount}
+						target="_self"
+					/>
+				))
+			}
+			<div class="col-span-full">
+				<div class="fade-in-up col-span-full flex items-center justify-between">
+					<a
+						href={page.url.prev ? page.url.prev : `javascript:`}
+						class={page.url.prev
+							? `btn bg-base-100 dark:text-gray-50 hover:text-primary-500 transition-all duration-150 ease-out  flex items-center`
+							: `btn btn-disabled dark:text-gray-50 bg-base-100 hover:text-primary-500 transition-all duration-150 ease-out  flex items-center`}
+					>
+						<svg
+							class="h-6 w-6 md:h-8 md:w-8"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+						>
+							<path
+								d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
+							></path>
+						</svg>
+						<span class="ml-2  pr-4 lg:inline">Previous</span>
+					</a>
+
+					<a
+						href={page.url.next ? page.url.next : `javascript:`}
+						class={page.url.next
+							? `btn  hover:text-primary-500 dark:text-gray-50 transition-all duration-150 ease-out   flex items-center`
+							: `btn btn-disabled  hover:text-primary-500 dark:text-gray-50 transition-all duration-150 ease-out border  flex items-center`}
+					>
+						<span class="ml-4  lg:inline">Next</span>
+						<svg
+							class="h-6 w-6 md:h-8 md:w-8"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+						>
+							<path
+								d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
+							></path>
+						</svg>
+					</a>
+				</div>
+				<div
+					class="join col-span-full flex gap-2 mt-4 justify-center w-full mx-auto"
+				>
+					{
+						pageLinks.map((link, index) =>
+							link === '...' ? (
+								<span class="flex items-center justify-center px-4 py-2">
+									...
+								</span>
+							) : (
+								<a
+									title={`Page ${link}`}
+									aria-label={`Page ${link}`}
+									href={
+										link === 1
+											? `/blog/tag/${title}`
+											: `/blog/tag/${title}/${link}`
+									}
+									class={`join-item btn flex rounded-xl  px-4 py-2 items-center justify-center bg-gray-200 transition-all duration-150 ease-out hover:bg-gray-300 dark:bg-gray-900/50 dark:text-gray-50 dark:hover:bg-gray-900 ${
+										link == currentPage ? 'bg-gray-300 dark:bg-gray-700' : ''
+									}`}
+								>
+									{link}
+								</a>
+							)
+						)
+					}
+				</div>
+			</div>
+		</section>
+	</div>
+</Layout>
+
+<style>
+	.trigger:hover .menu {
+		@apply visible translate-y-0 opacity-100;
+	}
+</style>

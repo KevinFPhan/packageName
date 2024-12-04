@@ -1,0 +1,134 @@
+---
+import ThemeIcon from "./ThemeIcon.astro"
+---
+
+<div
+  class="sticky top-[100px] w-full flex-col gap-4"
+  style="align-self: start;"
+>
+  <!-- <div
+    class="mb-b card bg-base-100 grid max-h-[600px] w-full grid-cols-2 justify-center justify-items-center gap-4 overflow-hidden p-4 shadow-xl backdrop-blur-2xl transition-colors md:grid-cols-1 lg:grid-cols-2"
+    id="button-box"
+  >
+    <ThemeIcon />
+  </div> -->
+  <div
+    class="mb-b card bg-base-100 fade-in-up menu mt-10 flex max-h-[65vh] w-full overflow-hidden p-4 shadow-xl backdrop-blur-2xl transition-colors"
+    id="content-box"
+  >
+    <div class="skeleton h-4 w-28"></div>
+    <br />
+    <div class="skeleton h-4 w-full"></div>
+    <br />
+    <div class="skeleton h-4 w-full"></div>
+    <br />
+    <div class="skeleton h-4 w-full"></div>
+    <br />
+  </div>
+  <div></div>
+</div>
+<script>
+  function getCleanText(element: HTMLElement) {
+    let text = ""
+    element.childNodes.forEach((node: ChildNode) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent
+      } else if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        (node as HTMLElement).className !== "katex-mathml"
+      ) {
+        text += getCleanText(node as HTMLElement)
+      }
+    })
+    return text
+  }
+
+  function addContent() {
+    const tocBox = document.getElementById("content-box") || null
+    const headings = Array.from(document.querySelectorAll("h1:not(.s), h2:not(.s)"))
+
+    const generateTocContent = () => {
+      let tocContent =
+        "<ul class='overflow-auto catalog w-full list-none m-0 p-0  s' id='catalogs'>"
+      let levelCounters = [0, 0, 0, 0, 0, 0]
+      headings.forEach((heading) => {
+        let headingText = getCleanText(heading as HTMLElement)
+        const headingId = heading.id
+        const headingLevel = parseInt(heading.tagName.charAt(1), 10)
+
+        if (headingId && headingText && headingLevel) {
+          headingText = headingText.replace(/#/g, "")
+          const level = headingLevel - 1
+          levelCounters[level]++
+          levelCounters.fill(0, level + 1)
+          var numbering = levelCounters.slice(1, level + 1).join(".")
+          if (numbering == "") numbering = "⚝"
+          tocContent += `
+            <li class="list-none m-0 p-0 ">
+              <a class="w-fit text-base  toc font-semibold relative flex items-center gap-2 p-2 level-${headingLevel}" href="#${headingId}">
+                <span class="toc-number"></span>${headingText}
+              </a>
+            </li>`
+        }
+      })
+      tocContent += "</ul>"
+      return tocContent
+    }
+
+    if (tocBox) {
+      tocBox.innerHTML = generateTocContent()
+    }
+
+    const getTotalHeight = (headings: Element[], currentIndex: number) => {
+      let totalHeight = 0
+      if (currentIndex > 0) currentIndex--
+      for (let i = 0; i < currentIndex; i++) {
+        const currentHeading = document.querySelector(
+          `a[href="#${headings[i].id}"]`,
+        ) as HTMLElement
+        if (currentHeading) {
+          totalHeight += currentHeading.offsetHeight
+        }
+      }
+      return totalHeight
+    }
+
+    const UpdateCurrentHeading = () => {
+      let currentIndex = headings.findIndex((heading) => {
+        return heading.getBoundingClientRect().top > window.innerHeight * 0.2
+      })
+      if (currentIndex === -1) {
+        currentIndex = headings.length - 1
+      } else if (currentIndex > 0) {
+        currentIndex -= 1
+      }
+      const currentHeading = document.querySelector(
+        `a[href="#${headings[currentIndex].id}"]`,
+      ) as HTMLElement
+      if (currentHeading) {
+        document.querySelector(".active")?.classList.remove("active")
+        currentHeading.classList.add("active")
+        document.getElementById("catalogs")?.scrollTo({
+          // top: 100,
+          top: getTotalHeight(headings, currentIndex),
+          behavior: "smooth",
+        })
+      }
+    }
+    document.addEventListener("scroll", UpdateCurrentHeading)
+  }
+
+  document.addEventListener("DOMContentLoaded", addContent)
+  document.addEventListener("swup:visit:end", addContent)
+</script>
+
+<style>
+  /* li a.active {
+    @apply bg-primary-500 text-white;
+  } */
+
+
+  .card {
+    /* box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px; */
+  }
+</style>

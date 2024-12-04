@@ -1,0 +1,117 @@
+---
+import dayjs from 'dayjs';
+import { Image } from 'astro:assets';
+import { type ArticleSchemaTransformed } from '../../schema/ArticleSchema';
+
+type Props = {
+	article: ArticleSchemaTransformed;
+	class?: string;
+};
+
+const {
+	article,
+	class: classes,
+	title,
+	desc,
+	image,
+	pubDate,
+	badge,
+	categories,
+	word,
+	time,
+	slug,
+} = Astro.props as Props;
+
+const displayDate = dayjs(pubDate).format('ddd MMM DD YYYY');
+const hasTategories = categories && categories.length > 0;
+const hasTags = article.tags && article.tags.length > 0;
+const target = '_self';
+---
+
+<div
+	class="card col-span-1 backdrop-blur-xl dark:bg-neutral-900/50 fade-in-up relative flex w-full flex-col overflow-hidden shadow-xl transition-colors special_sect"
+>
+	<div
+		class="rounded-0 card fade-in-up relative flex h-auto w-full flex-1 overflow-hidden transition-colors order-2"
+	>
+		<div class="relative flex h-full w-full flex-col justify-between p-6">
+			<a href={article.slug} target={target}>
+				<h1 id={article.title} class="s m-0 text-2xl leading-snug">
+					{article.title}
+				</h1>
+			</a>
+			<!-- <div class="m-2">{desc}</div> -->
+			<div class="pb-2">
+				<!-- <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center gap-2">
+            {
+              displayDate && (
+                <div class="badge badge-neutral">{displayDate}</div>
+              )
+            }
+            {badge && <div class="badge badge-primary">{badge}</div>}
+          </div>
+        </div> -->
+				<div class="flex flex-col">
+					{
+						time && word && (
+							// <div class="badge  whitespace-nowrap">{`${time} ${t("label.readTime")}`}</div>
+							<div class="mb-2 flex gap-5">
+								<div class="whitespace-nowrap text-base dark:text-gray-300">
+									{`${time} minutes`} <span class="px-2">•</span>{' '}
+									{`${word} words`}
+								</div>
+							</div>
+						)
+					}
+					<div class="flex flex-wrap items-center gap-2">
+						<!-- {
+							hasTategories &&
+								categories.length > 0 &&
+								categories.map((category) => (
+									<a
+										href={`/blog/categories/${category}`}
+										class="btn btn-xs btn-accent text-xs"
+									>
+										{category}
+									</a>
+								))
+						} -->
+						{
+							hasTags &&
+								article.tags.map((tag) => (
+									<a
+										href={`/blog/tag/${tag}`}
+										class="btn btn-xs dark:text-blue-300 dark:border-blue-400 border-blue-500 border text-blue-600 rounded-md px-2 py-[2px] text-xs"
+									>
+										{tag}
+									</a>
+								))
+						}
+					</div>
+					<!-- {word && <div class="badge whitespace-nowrap">{`${word} words`}</div>} -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{
+		article.imageSrc && (
+			<a
+				href={article.slug}
+				target={target}
+				class="image-link relative aspect-[5/3]  h-auto w-full overflow-hidden rounded-none order-1"
+			>
+				<Image
+					src={article.imageSrc}
+					alt={article.imageAlt || 'Alt'}
+					width="300"
+					height="200"
+					format="webp"
+					loading="eager"
+					class="h-full w-full object-cover"
+				/>
+			</a>
+		)
+	}
+</div>

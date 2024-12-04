@@ -1,0 +1,135 @@
+---
+import PostLayout from "../../layouts/Post.astro"
+import BaseLayout from "@layouts/LayoutBlog.astro"
+import BaseCard from "@componentsO/blog/BaseCard.astro"
+import { getCollection, getEntry } from "astro:content"
+
+import dayjs from "dayjs"
+
+import PostSummary from "@components/blog/summary"
+
+import TagCard from "@componentsO/blog/TagCard.astro"
+import CategoryCard from "@componentsO/blog/CategoryCard.astro"
+import SidebarTool from "@componentsO/blog/SidebarTool.astro"
+import Profile from "@componentsO/blog/ProfileCard.astro"
+import SquareCard from "@componentsO/blog/SquareCard.astro"
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog")
+  const page = await getEntry("pages", "blog")
+  return posts.map((post) => ({ params: { slug: post.slug } }))
+}
+
+if (!Astro.params.slug) {
+  throw new Error("Post slug is undefined")
+}
+const post = await getEntry("blog", Astro.params.slug)
+if (!post) {
+  throw new Error("Failed to get post with slug: " + Astro.params.slug)
+}
+const { Content, remarkPluginFrontmatter } = await post.render()
+
+const includeSidebar = true
+
+const posts = await getCollection("blog")
+// posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+const postsWithStats = await Promise.all(
+  posts.map(async (post) => {
+    const { remarkPluginFrontmatter } = await post.render()
+
+    // 将统计信息添加到 post 数据中
+    return {
+      ...post,
+      remarkPluginFrontmatter: {
+        readingTime: remarkPluginFrontmatter.readingTime,
+        totalCharCount: remarkPluginFrontmatter.totalCharCount,
+      },
+    }
+  }),
+)
+
+// Sort postsWithStats by date in descending order
+postsWithStats.sort((a, b) => {
+  const dateA = dayjs(a.data.date).valueOf()
+  const dateB = dayjs(b.data.date).valueOf()
+  return dateB - dateA
+})
+ 
+---
+
+<BaseLayout title={post.data.title}>
+  <div class="m-auto mt-[100px] max-w-screen-xl">
+    <div class="relative grid grid-cols-4 gap-4 p-0 md:top-0 md:p-0 lg:p-4">
+      <div
+        class="top-4 order-2 hidden bg-white bg-opacity-0 p-2 max-md:hidden md:col-span-1 xl:inline"
+      >
+        {
+          includeSidebar && (
+            <>
+              {/* <Profile /> */}
+              {/* <CategoryCard /> */}
+              <TagCard />
+              <SidebarTool />
+            </>
+          )
+        }
+      </div>
+      <div class="order-1 col-span-4 bg-white bg-opacity-0 p-2 xl:col-span-3">
+        <div>
+          <main class="detail transition-main">
+            <div class="markdown grid grid-cols-1 gap-8">
+              <BaseCard
+                title={post.data.title}
+                image={post.data.thumb_image_path}
+                pubDate={post.data.date}
+                badge={post.data.badge}
+                categories={post.data.categories}
+                tags={post.data.tags}
+                word={remarkPluginFrontmatter.totalCharCount}
+                time={remarkPluginFrontmatter.readingTime}
+                isBlog="true"
+              >
+                <Content />
+              </BaseCard>
+
+              <section
+                class="special_sect flex max-w-screen-md flex-col pt-[48px]"
+              >
+                <h2 class="text-2xl">Recent Posts</h2>
+                <div class="mt-5 grid gap-5 sm:grid-cols-2">
+                  {
+                    postsWithStats
+                      .slice(0, 4)
+                      .map((post, i) => (
+                        <SquareCard
+                          title={post.data.title}
+                          image={post.data.thumb_image_path}
+                          desc={post.data.description}
+                          url={"/blog/" + post.slug}
+                          pubDate={post.data.date}
+                          badge={post.data.badge}
+                          categories={post.data.categories}
+                          tags={post.data.tags}
+                          word={post.remarkPluginFrontmatter.totalCharCount}
+                          time={post.remarkPluginFrontmatter.readingTime}
+                          target="_self"
+                        />
+                      ))
+                  }
+                  <!-- {
+                    posts.slice(0, 2).map((post, i) => (
+                      <div class="max-w-[420px]">
+                        <PostSummary post={post} />
+                      </div>
+                    ))
+                  } -->
+                </div>
+              </section>
+            </div>
+          </main>
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

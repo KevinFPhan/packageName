@@ -1,0 +1,87 @@
+---
+import { Layout } from 'virtual:package-name/components';
+import FeaturedArticle from '../components/blog/FeaturedArticle.astro';
+import ArticleCard from '../components/blog/ArticleCard.astro';
+import Config from 'virtual:package-name/user-config';
+import { getArticles } from '../utils/routing';
+import SquareCard from '../components/blog/SquareCard.astro';
+import TagCard from '../components/blog/TagDiv.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const { paginateSize, blogRoot } = Config;
+
+export const prerender = true;
+
+let blogArticles = await getArticles();
+
+const totalPages = Math.ceil(blogArticles.length / paginateSize);
+const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+let featuredArticle =
+	blogArticles.find((article) => article.featured) || blogArticles[0];
+
+let paginated = false;
+
+if (blogArticles.length > paginateSize) {
+	paginated = true;
+	blogArticles = blogArticles.slice(0, paginateSize);
+}
+
+const includeSidebar = true;
+---
+
+<Layout title="Blog" seo={{ ...blogRoot?.seo }} config={Config}>
+	{blogArticles.length === 0 && <p>No articles yet, but check back soon!</p>}
+
+	{
+		blogArticles.length > 0 && (
+			<>
+				<h1 class="col-span-4 pb-8 text-center text-5xl font-bold xl:col-span-4">
+					Blog
+				</h1>
+				<div class="fade-in-up order-2 w-full bg-white bg-opacity-0 p-2 md:col-span-1">
+					{includeSidebar && (
+						<>
+							{/* <Profile /> */}
+							{/* <CategoryCard /> */}
+							<TagCard />
+							{/* <SidebarTool /> */}
+						</>
+					)}
+				</div>
+				<hr class="my-8 border-slate-900/50 dark:border-slate-200/50" />
+				<Breadcrumbs
+					breadcrumbs={[
+						{ href: '/', text: 'Home' },
+						{ href: '/blog', text: 'Blog' },
+					]}
+				/>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					{blogArticles.map((article) => (
+						<SquareCard
+							article={{ ...article }}
+							time={article.remarkPluginFrontmatter.readingTime}
+							word={article.remarkPluginFrontmatter.totalCharCount}
+							target="_self"
+						/>
+					))}
+				</div>
+			</>
+		)
+	}
+
+	{
+		paginated && (
+			<div class="flex items-center content-center justify-center gap-2 mt-4">
+				{pageNumbers.map((number) => (
+					<a
+						href={`/blog/${number}`}
+						class={`rounded-xl px-4 py-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300`}
+					>
+						{number}
+					</a>
+				))}
+			</div>
+		)
+	}
+</Layout>

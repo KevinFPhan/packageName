@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content"
+// import { t } from "i18next";
+
+interface TagCount {
+  tag: string
+  count: number
+}
+
+export async function getTagsWithCounts(): Promise<TagCount[]> {
+  const posts = await getCollection("blog")
+
+  const tagMap = new Map<string, number>()
+
+  posts.forEach((post) => {
+    const tags = post.data.tags || []
+    tags.forEach((tag) => {
+      tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
+    })
+  })
+
+  return Array.from(tagMap, ([tag, count]) => ({ tag, count }))
+}
+const tagsWithCounts = await getTagsWithCounts()
+---
+
+<div class="card mb-8 w-full p-4 shadow-lg bg-neutral-50/10 dark:bg-neutral-900/10 backdrop-blur-2xl transition-colors">
+  <div class="mb-4 px-4">
+    <div class="btn btn-sm btn-ghost no-animation w-full font-bold">
+      <!-- {t("label.tagCard")} -->
+      <!-- ASD -->
+      <h3>Tags</h3>
+    </div>
+  </div>
+  <div class="flex max-h-[300px] w-full flex-wrap gap-2.5 ">
+    {
+      tagsWithCounts.map(({ tag, count }) => (
+        <a
+          href={`/blog/tag/${tag}`}
+          class="join flex items-center overflow-hidden transition-all duration-150 ease-out rounded-lg bg-neutral-100/60 hover:bg-neutral-100 dark:hover:bg-neutral-900/80 shadow-lg backdrop-blur-2xl dark:bg-neutral-900/40"
+        >
+          <p class="btn btn-xs join-item px-2 py-1 text-base">{tag}</p>
+          <span class="pb-1 text-base font-extrabold text-blue-500 dark:text-blue-400">
+            ≎
+          </span>
+          <p class="btn btn-xs join-item count px-2 py-1 text-base font-bold">
+            {count}
+          </p>
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .card {
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+  }
+</style>

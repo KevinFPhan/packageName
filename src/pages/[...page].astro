@@ -1,0 +1,254 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Config from 'virtual:package-name/user-config';
+import { Layout } from 'virtual:package-name/components';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import SquareCard from '../components/blog/SquareCard.astro';
+import TagCard from '../components/blog/TagDiv.astro';
+import { getArticles } from '../utils/routing';
+
+export const prerender = true;
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const { paginateSize } = Config;
+	const articles = await getArticles();
+	const totalPages = Math.ceil(articles.length / paginateSize);
+
+	const paths = [];
+
+	for (let i = 1; i <= totalPages; i++) {
+		const params = i === 1 ? { page: undefined } : { page: String(i) };
+		paths.push({ params });
+	}
+
+	return paths;
+};
+
+const { paginateSize, blogRoot } = Config;
+const includeSidebar = true;
+
+let currentPage = 1;
+if (Astro.params.page) {
+	currentPage = parseInt(Astro.params.page);
+}
+
+const articles = await getArticles();
+const totalPages = Math.ceil(articles.length / paginateSize);
+
+const start = (currentPage - 1) * paginateSize;
+const end = start + paginateSize;
+const paginatedArticles = articles.slice(start, end);
+
+const prevPage =
+	currentPage > 1
+		? currentPage === 2
+			? '/blog'
+			: `/blog/${currentPage - 1}`
+		: null;
+const nextPage = currentPage < totalPages ? `/blog/${currentPage + 1}` : null;
+
+const pageLinks = generatePageLinks(totalPages, currentPage);
+
+function generatePageLinks(
+	totalPages: number,
+	currentPage: number
+): Array<number | string> {
+	const maxPageNumbersToShow = 5;
+	const pageLinks: Array<number | string> = [];
+
+	if (totalPages <= maxPageNumbersToShow) {
+		// Show all pages
+		for (let i = 1; i <= totalPages; i++) {
+			pageLinks.push(i);
+		}
+	} else {
+		// Always show first page
+		pageLinks.push(1);
+
+		if (currentPage <= 3) {
+			// Show first 4 pages and ellipsis, then last page
+			for (let i = 2; i <= 4; i++) {
+				pageLinks.push(i);
+			}
+			pageLinks.push('...');
+			pageLinks.push(totalPages);
+		} else if (currentPage >= totalPages - 2) {
+			// Show first page, ellipsis, and last 4 pages
+			pageLinks.push('...');
+			for (let i = totalPages - 3; i <= totalPages; i++) {
+				pageLinks.push(i);
+			}
+		} else {
+			// Show first page, ellipsis, current page -1, current page, current page +1, ellipsis, last page
+			pageLinks.push('...');
+			pageLinks.push(currentPage - 1);
+			pageLinks.push(currentPage);
+			pageLinks.push(currentPage + 1);
+			pageLinks.push('...');
+			pageLinks.push(totalPages);
+		}
+	}
+
+	// Ensure uniqueness and limit to maxPageNumbersToShow
+	return Array.from(new Set(pageLinks)).slice(0, maxPageNumbersToShow + 2); // +2 for possible ellipses
+}
+
+console.log('currentPage Config', Astro);
+---
+
+<Layout
+	title={currentPage === 1 ? 'Blog' : `Blog - Page ${currentPage}`}
+	seo={{ ...blogRoot?.seo }}
+	description={blogRoot?.description}
+	config={Config}
+>
+	<h1 class="col-span-4 pb-8 text-center text-5xl font-bold xl:col-span-4">
+		Blog
+	</h1>
+
+	{
+		includeSidebar && (
+			<div class="fade-in-up order-2 w-full bg-white bg-opacity-0 p-2 md:col-span-1">
+				<TagCard />
+			</div>
+		)
+	}
+
+	<hr class="my-8 border-slate-900/50 dark:border-slate-200/50" />
+
+	<Breadcrumbs
+		breadcrumbs={[
+			{ href: '/', text: 'Home' },
+			{ href: '/blog', text: 'Blog' },
+			...(currentPage > 1 ? [{ text: `Page ${currentPage}` }] : []),
+		]}
+	/>
+
+	{
+		paginatedArticles.length === 0 ? (
+			<p>No articles yet, but check back soon!</p>
+		) : (
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+				{paginatedArticles.map((article) => (
+					<SquareCard
+						article={article}
+						time={article.remarkPluginFrontmatter.readingTime}
+						word={article.remarkPluginFrontmatter.totalCharCount}
+						target="_self"
+					/>
+				))}
+			</div>
+		)
+	}
+
+	<div
+		class={`flex items-center ${
+			prevPage ? 'justify-between' : 'justify-end'
+		}  gap-4 px-4 mt-4`}
+	>
+		{
+			prevPage && (
+				<a
+					href={prevPage}
+					class="flex left-arrow items-center rounded-xl  px-4 py-2 bg-[var(--primary)] text-gray-900 dark:text-gray-950"
+				>
+					<svg
+						class="h-6 w-6 md:h-8 md:w-8"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="currentColor"
+					>
+						<path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+					</svg>
+					Previous Page
+				</a>
+			)
+		}
+		{
+			nextPage && (
+				<a
+					href={nextPage}
+					class="rounded-xl flex right-arrow items-center px-4 py-2 bg-[var(--primary)] text-gray-900 dark:text-gray-950"
+				>
+					Next Page
+					<svg
+						class="h-6 w-6 md:h-8 md:w-8"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="currentColor"
+					>
+						<path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+					</svg>
+				</a>
+			)
+		}
+	</div>
+
+	<div
+		class="join pb-20 flex gap-2 mt-4 dark:divide-neutral-700 mx-auto justify-center"
+	>
+		{
+			pageLinks.map((link, index) =>
+				link === '...' ? (
+					<span key={index} class="flex items-center justify-center px-4 py-2">
+						...
+					</span>
+				) : (
+					<a
+						key={index}
+						title={`Page ${link}`}
+						aria-label={`Page ${link}`}
+						href={link === 1 ? `/blog` : `/blog/${link}`}
+						class={`join-item btn flex rounded-xl px-4 py-2 items-center justify-center bg-gray-200 transition-all duration-150 ease-out hover:bg-gray-400 dark:bg-neutral-900/50 dark:text-gray-50 dark:hover:bg-neutral-900 ${
+							link == currentPage ? 'bg-gray-400 dark:bg-neutral-700' : ''
+						}`}
+					>
+						{link}
+					</a>
+				)
+			)
+		}
+	</div>
+</Layout>
+
+<style>
+	.trigger:hover .menu {
+		@apply visible translate-y-0 opacity-100;
+	}
+
+	@keyframes bounce-horizontal {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		50% {
+			transform: translateX(-10px);
+		}
+	}
+	@keyframes bounce-horizontal-2 {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		50% {
+			transform: translateX(10px);
+		}
+	}
+
+	.left-arrow:hover svg {
+		animation: bounce-horizontal 1.5s infinite;
+	}
+
+	.right-arrow:hover svg {
+		animation: bounce-horizontal-2 1.5s infinite;
+	}
+
+	.left-arrow svg,
+	.right-arrow svg {
+		transition: all 0.3s;
+	}
+</style>

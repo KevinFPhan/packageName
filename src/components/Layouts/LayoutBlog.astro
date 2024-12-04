@@ -1,0 +1,138 @@
+---
+import '../../styles/styles.css';
+import '../../styles/main.css';
+import { Image } from 'astro:assets';
+
+import Profile from '../../components/blog/ProfileCard.astro';
+import CategoryCard from '../../components/blog/CategoryCard.astro';
+import SidebarTool from '../../components/blog/SidebarTool.astro';
+import TagCard from '../../components/blog/TagCard.astro';
+
+import BlurBg from '../../components/BlurBg.astro';
+
+import { SEO } from 'astro-seo';
+import { logos } from 'virtual:package-name/user-images';
+import { type AstroBlogLayoutProps } from '../../types/LayoutProps';
+import '../../styles/styles.css';
+
+// export interface SEOProps {
+// 	title: string | null;
+// 	author: string | null;
+// 	publisher: string | null;
+// 	description: string | null;
+// 	keywords: string | null;
+// 	theme_color: string | null;
+// 	canonical_url: string | null;
+// 	featured_image: string | null;
+// 	featured_image_alt: string | null;
+// 	no_index: boolean | false;
+// 	no_follow: boolean | false;
+// 	open_graph_type: string | null;
+// 	author_twitter_handle: string | null;
+// 	google_site_verification: string | null;
+// }
+
+// export interface Props {
+// 	title: string;
+// 	seo?: SEOProps;
+// }
+
+// const g_tag = site.google_tag;
+// const baseUrl = Astro.site;
+// const title = Astro.props.title ? `${Astro.props.title}` : site.site_title;
+// const description = seo?.description || site.description;
+// const image = seo?.featured_image || site.site_featured_image;
+// const image_alt = seo?.featured_image_alt || site.site_featured_image_alt;
+
+const { title, description, seo, config, site } =
+	Astro.props as AstroBlogLayoutProps;
+
+// const canonicalURL = new URL(seo?.canonical_url || title);
+// console.log('canonicalURL', canonicalURL);
+
+const { title: siteName, logo: configLogo } = config;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<!-- Add fonts -->
+
+		<!-- <SEO {title} titleTemplate={`%s - ${siteName}`} {description} {...seo} /> -->
+
+		<SEO
+			noindex={seo?.no_index === 'true'}
+			nofollow={seo?.no_follow === 'true'}
+			title={title}
+			description={description}
+			openGraph={{
+				basic: {
+					title: seo?.title || title || 'Default Title',
+					url: site,
+					type: seo?.open_graph_type || 'website',
+					image: seo?.featured_image || 'default-image-url.jpg',
+				},
+				image: {
+					url: seo?.featured_image || 'default-image-url.jpg',
+					alt: seo?.featured_image_alt || 'Default image alt text',
+					width: 1200,
+					height: 630,
+				},
+				optional: {
+					description: description,
+				},
+			}}
+		/>
+
+		<slot name="head" />
+	</head>
+	<body class="relative">
+		<main id="swup" class="relative z-10">
+			<div class="relative z-[10] max-w-screen-xl mx-auto pt-[100px]">
+				<a
+					href="/"
+					class="inline-block font-semibold hover:text-indigo-500 transition-colors"
+				>
+					{
+						logos.light && (
+							<Image
+								src={logos.light}
+								alt={configLogo?.alt || 'Logo'}
+								class="w-12 dark:hidden"
+							/>
+						)
+					}
+					{
+						logos.dark && (
+							<Image
+								src={logos.dark}
+								alt={configLogo?.alt || 'Logo'}
+								class="w-12 hidden dark:block"
+							/>
+						)
+					}
+					{
+						!logos.light && (
+							<span class="px-6 py-3 rounded-xl bg-[var(--primary)] text-slate-100 dark:text-gray-950">
+								Home
+							</span>
+						)
+					}
+				</a>
+				<slot />
+			</div>
+			<BlurBg />
+		</main>
+		<style is:global>
+			:root {
+				--pageContainer: 1280px;
+				--pagePadding: 2rem;
+			}
+		</style>
+	</body>
+</html>

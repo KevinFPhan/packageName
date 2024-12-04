@@ -1,0 +1,64 @@
+---
+import Config from 'virtual:package-name/user-config';
+import { type ArticleSchemaTransformed } from '../schema/ArticleSchema';
+import ArticleLayout from '../components/blog/ArticleLayout.astro';
+import { getArticles } from '../utils/routing';
+
+export const prerender = true;
+
+type Props = {
+	entry: ArticleSchemaTransformed;
+	recentBlogs: ArticleSchemaTransformed[];
+};
+
+export async function getStaticPaths() {
+	const blogEntries = await getArticles();
+	const routes = [];
+
+	// Get the 4 most recent blogs
+	const recentBlogs = blogEntries.slice(0, 4);
+
+	for (const entry of blogEntries) {
+		routes.push({
+			params: {
+				slug: entry.slug,
+			},
+			props: {
+				entry,
+				recentBlogs,
+			},
+		});
+	}
+
+	return routes;
+}
+
+const { entry, recentBlogs } = Astro.props;
+const { Content , remarkPluginFrontmatter } = await entry.render();
+---
+
+<ArticleLayout article={entry} recentBlogs={recentBlogs} config={Config}>
+	<Content />
+</ArticleLayout>
+
+<style is:global>
+	/* .blog-post h1 {
+		@apply text-2xl font-black;
+	}
+
+	.blog-post h2 {
+		@apply text-xl font-bold;
+	}
+
+	.blog-post h3 {
+		@apply text-lg font-semibold;
+	}
+
+	.blog-post :where(h1, h2, h3, h4, h5, h6, p) {
+		@apply mb-2;
+	}
+
+	.blog-post :where(h1, h2, h3, h4, h5, h6) {
+		@apply mt-4;
+	} */
+</style>

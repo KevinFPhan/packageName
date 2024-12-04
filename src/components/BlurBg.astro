@@ -1,0 +1,42 @@
+<div
+  class="single_hero_background nozoom fixed inset-x-0 top-0 h-[800px]"
+  style="background-image: url('/images/desque.webp');"
+>
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-gray-100  to-transparent mix-blend-normal dark:from-gray-800"
+  >
+  </div>
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-gray-100 to-gray-100 opacity-60 mix-blend-normal dark:from-gray-800 dark:to-gray-800"
+  >
+  </div>
+</div>
+
+<div
+  id="menu-blur"
+  class="single_hero_background nozoom fixed inset-x-0 top-0 h-full opacity-0 backdrop-blur-2xl"
+>
+</div>
+
+<script is:inline>
+  window.addEventListener("scroll", function (e) {
+    var scroll =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0
+    var background_blur = document.getElementById("menu-blur")
+    background_blur.style.opacity = scroll / 300
+  })
+</script>
+
+<style>
+  .single_hero_background {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: calc(100% + 40px);
+    z-index: -10;
+    margin-left: -20px;
+  }
+</style>

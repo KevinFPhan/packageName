@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import { Layout } from 'virtual:package-name/components';
+import { type ArticleSchemaTransformed } from '../../schema/ArticleSchema';
+
+import Breadcrumbs from '../Breadcrumbs.astro';
+import type { AstroBlogUserConfig } from '../../schema/UserConfigSchema';
+
+import TagCard from './TagCard.astro';
+import SidebarTool from './SidebarTool.astro';
+import BaseCard from './BaseCard.astro';
+import SquareCard from './SquareCard.astro';
+
+type Props = {
+	article: ArticleSchemaTransformed;
+	config: AstroBlogUserConfig;
+	recentBlogs: ArticleSchemaTransformed[];
+};
+
+const { article, config, recentBlogs } = Astro.props as Props;
+
+const includeSidebar = true;
+---
+
+<Layout
+	title={article.title}
+	description={article.description}
+	seo={article.seo}
+	{config}
+>
+	<div class="">
+		<Breadcrumbs
+			breadcrumbs={[
+				{ href: '/', text: 'Home' },
+				{ href: '/blog', text: 'Blog' },
+				{ text: article.title },
+			]}
+		/>
+		<!-- <div class="md:grid md:grid-cols-[min-content_1fr] md:gap-8">
+			<div>
+				{
+					!!article.imageSrc && (
+						<Image
+							src={article.imageSrc}
+							alt={article.imageAlt || ''}
+							class="h-64 rounded-[20px] object-cover md:max-w-xs drop-shadow-lg"
+						/>
+					)
+				}
+
+				<p class="mt-4">📅 {article.date}</p>
+				<p class="font-bold font-display text-xl my-4">{article.title}</p>
+				<p>{article.description}</p>
+
+				<hr class="border-none py-4" />
+
+				{
+					!!article.author && !!article.author.name && (
+						<>
+							<span class="block text-lg font-bold">Author:</span>
+							<p class="block mb-4">{article.author.name || 'Author'}</p>
+							{!!article.author.imageSrc && (
+								<Image
+									src={article.author.imageSrc}
+									alt={article.author.imageAlt || article.author.name}
+									class="w-1/2 aspect-square rounded-full block mb-4 drop-shadow-lg"
+								/>
+							)}
+
+							{!!article.author.description && (
+								<p class="block mb-4">{article.author.description}</p>
+							)}
+
+							<hr class="border-none py-4" />
+						</>
+					)
+				}
+
+				<span class="block mb-2 text-lg font-bold">Tags:</span>
+				<div class="flex flex-wrap items-center">
+					{
+						article.tags.map((tag) => (
+							<span
+								class="px-4 py-1 rounded-full bg-rose-400 shadow"
+								style={`background-color: ${tag.bgColor}; color: ${tag.textColor}`}
+							>
+								{tag.tag}
+							</span>
+						))
+					}
+				</div>
+			</div>
+			<div>
+				<slot />
+			</div>
+		</div> -->
+		<div class="relative grid grid-cols-4 gap-4 p-0 md:top-0 md:p-0 lg:p-4">
+			<div
+				class="top-4 order-2 hidden bg-white bg-opacity-0 p-2 md:col-span-1 xl:inline"
+			>
+				{
+					includeSidebar && (
+						<>
+							{/* <Profile /> */}
+							{/* <CategoryCard /> */}
+							<TagCard />
+							<SidebarTool />
+						</>
+					)
+				}
+			</div>
+			<div class="order-1 col-span-4 bg-white bg-opacity-0 p-2 xl:col-span-3">
+				<div>
+					<main class="detail transition-main">
+						<div class="markdown grid grid-cols-1 gap-8">
+							<BaseCard
+								isBlog={true}
+								article={article}
+								word={article.remarkPluginFrontmatter.totalCharCount}
+								time={article.remarkPluginFrontmatter.readingTime}
+							>
+								<slot />
+							</BaseCard>
+
+							<section
+								class="special_sect flex max-w-screen-md flex-col pt-[48px]"
+							>
+								<h2 class="text-2xl">Recent Posts</h2>
+								<div class="mt-5 grid gap-5 sm:grid-cols-2">
+									{
+										recentBlogs.map((article) => (
+											<SquareCard
+												article={{ ...article }}
+												time={article.remarkPluginFrontmatter.readingTime}
+												word={article.remarkPluginFrontmatter.totalCharCount}
+												target="_self"
+											/>
+										))
+									}
+									<!-- {
+										posts.slice(0, 2).map((post, i) => (
+											<div class="max-w-[420px]">
+												<PostSummary post={post} />
+											</div>
+										))
+									} -->
+								</div>
+							</section>
+						</div>
+					</main>
+					<br />
+				</div>
+			</div>
+		</div>
+	</div>
+</Layout>
