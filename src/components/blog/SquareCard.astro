@@ -35,7 +35,7 @@ const target = '_self';
 		class="rounded-0 card fade-in-up relative flex h-auto w-full flex-1 overflow-hidden transition-colors order-2"
 	>
 		<div class="relative flex h-full w-full flex-col justify-between p-6">
-			<a href={article.slug} target={target}>
+			<a href={`/blog/${article.slug}`} target={target}>
 				<h1 id={article.title} class="s m-0 text-2xl leading-snug">
 					{article.title}
 				</h1>
@@ -98,7 +98,7 @@ const target = '_self';
 	{
 		article.imageSrc && (
 			<a
-				href={article.slug}
+				href={`/blog/${article.slug}`}
 				target={target}
 				class="image-link relative aspect-[5/3]  h-auto w-full overflow-hidden rounded-none order-1"
 			>

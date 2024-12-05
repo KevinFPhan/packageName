@@ -45,7 +45,7 @@
 		"preview": "astro preview",
 		"sync": "astro sync",
 		"astro": "astro",
-		"tailwind:build": "tailwind -o ./src/styles/styles.css -m"
+		"tailwind:build": "tailwind -o ./src/styles/main.css -m"
 	},
 	"type": "module",
 	"dependencies": {
