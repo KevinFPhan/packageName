@@ -4,7 +4,7 @@ import Config from 'virtual:package-name/user-config';
 
 import BaseCard from '../../components/blog/BaseCard.astro';
 import { getCollection, getEntry } from 'astro:content';
-import Search from '../../components/blog/Search.astro';
+// import Search from '../../components/blog/Search.astro';
 import TagCard from '../../components/blog/TagCard.astro';
 import SquareCard from '../../components/blog/SquareCard.astro';
 
@@ -78,7 +78,7 @@ const includeSidebar = true;
 					Blog
 				</h1>
 				<div
-					class="fade-in-up order-2 w-full bg-white bg-opacity-0 p-2 md:col-span-1"
+					class="fade-in-up order-2 w-full  p-2 md:col-span-1"
 				>
 					{
 						includeSidebar && (
@@ -92,7 +92,7 @@ const includeSidebar = true;
 					}
 				</div>
 			</div>
-			<div class="order-1 col-span-4 bg-white bg-opacity-0 p-2 xl:col-span-4">
+			<div class="order-1 col-span-4  p-2 xl:col-span-4">
 				<div
 					class="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
 				>
