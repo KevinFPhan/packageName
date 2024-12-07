@@ -1,6 +1,4 @@
 import { z } from 'astro/zod'
-
-import { type AuthorSchemaRaw } from './AuthorSchema';
 import { TagSchema } from './TagSchema';
 import { SEOSchema } from './SEOSchema';
 
@@ -33,7 +31,7 @@ export type ArticleSchemaTransformed = Omit<ArticleSchemaRaw, 'date' | 'author' 
     link: string;
     render: Function;
     id: string;
-    author: AuthorSchemaRaw,
+    author: string,
     tags: Array<z.infer<typeof TagSchema>>,
 }
 

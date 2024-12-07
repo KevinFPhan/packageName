@@ -1,26 +1,18 @@
 import { getEntry, getEntries } from 'astro:content';
 import { type ArticleSchemaTransformed, type ArticleContentCollectionData } from '../schema/ArticleSchema'
 import { type TagSchemaRaw } from '../schema/TagSchema';
-import { type AuthorSchemaRaw } from '../schema/AuthorSchema';
 
 export const transformContentCollection = async (contentCollectionData: ArticleContentCollectionData): Promise<ArticleSchemaTransformed> => {
 
 	const data = contentCollectionData.data
-	let author: AuthorSchemaRaw
+    console.log('contentCollectionData', contentCollectionData);
+    let author = ''
 	let tags: TagSchemaRaw[] = []
 
 	if (data.author) {
-		author = (await getEntry('author', data.author)).data as AuthorSchemaRaw
+		author = data.author
 	}
 
-	// if (data.tags) {
-	// 	tags = (await getEntries(data.tags.map(slug => ({ collection: 'tag', slug, }))))
-	// 		.map(tag => ({
-	// 			tag: tag.slug,
-	// 			bgColor: tag.data.bgColor,
-	// 			textColor: tag.data.textColor,
-	// 		}))
-	// }
 
     if (data.tags) {
         tags = data.tags; // Directly use the tags from the blog collection
@@ -33,7 +25,7 @@ export const transformContentCollection = async (contentCollectionData: ArticleC
         slug: contentCollectionData.slug,
         link: `/blog/${ contentCollectionData.slug }`,
         date: data.date?.toDateString(),
-        imageSrc: data.imageSrc !== undefined ? data.imageSrc satisfies ImageMetadata : undefined,
+        imageSrc: data.imageSrc,
         imageAlt: data.imageAlt,
         author,
         tags,
