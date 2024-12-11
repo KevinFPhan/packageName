@@ -25,8 +25,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	return paths;
 };
 
-const page = await getEntry({ collection: 'pages', slug: '/blog' });
-const page2 = await getEntry('pages', '/blog');
+const page = await getEntry({ collection: 'pages', slug: 'blog' });
+const page2 = await getEntry('pages', 'blog');
 const page3 = await getCollection('pages');
 
 
