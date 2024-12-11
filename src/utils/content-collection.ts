@@ -5,7 +5,7 @@ import { type TagSchemaRaw } from '../schema/TagSchema';
 export const transformContentCollection = async (contentCollectionData: ArticleContentCollectionData): Promise<ArticleSchemaTransformed> => {
 
 	const data = contentCollectionData.data
-    console.log('contentCollectionData', contentCollectionData);
+
     let author = ''
 	let tags: TagSchemaRaw[] = []
 

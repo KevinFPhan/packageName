@@ -4,7 +4,6 @@ import { transformContentCollection } from "./content-collection"
 
 export async function getArticles() {
     const articlesRaw: Array<ArticleContentCollectionData> = ((await getCollection('blog')) ?? []);
-    console.log('articlesRaw', articlesRaw);
 
     const sortedArticles = articlesRaw.sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
     let blogArticles: Array<ArticleSchemaTransformed> = [];

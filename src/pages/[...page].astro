@@ -6,7 +6,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import SquareCard from '../components/blog/SquareCard.astro';
 import TagCard from '../components/blog/TagDiv.astro';
 import { getArticles } from '../utils/routing';
-import { getEntry } from 'astro:content';
+import { getEntry, getCollection } from 'astro:content';
 
 export const prerender = true;
 
@@ -25,8 +25,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	return paths;
 };
 
-const page = await getEntry({ collection: 'pages', slug: '/blog/' });
+const page = await getEntry({ collection: 'pages', slug: '/blog' });
+const page2 = await getEntry('pages', '/blog');
+const page3 = await getCollection('pages');
+
+
 console.log('page', page);
+console.log('page2', page2);
+console.log('page3', page3);
 
 const { paginateSize, blogRoot } = Config;
 const includeSidebar = true;
@@ -97,7 +103,6 @@ function generatePageLinks(
 	return Array.from(new Set(pageLinks)).slice(0, maxPageNumbersToShow + 2); // +2 for possible ellipses
 }
 
-// console.log('currentPage Config', Astro);
 ---
 
 <Layout
