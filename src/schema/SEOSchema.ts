@@ -8,6 +8,8 @@ export const SEOSchema = z.object({
     canonical_url: z.string().url().optional(),
     no_follow: z.string().optional(),
     no_index: z.string().optional(),
+    featured_image: z.string().optional(),
+    featured_image_alt: z.string().default('').optional(),
     languageAlternatives: z.array(z.object({
         href: z.string().url(),
         hrefLang: z.string(),

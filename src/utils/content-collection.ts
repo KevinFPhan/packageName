@@ -1,4 +1,3 @@
-import { getEntry, getEntries } from 'astro:content';
 import { type ArticleSchemaTransformed, type ArticleContentCollectionData } from '../schema/ArticleSchema'
 import { type TagSchemaRaw } from '../schema/TagSchema';
 
@@ -6,12 +5,8 @@ export const transformContentCollection = async (contentCollectionData: ArticleC
 
 	const data = contentCollectionData.data
 
-    let author = ''
 	let tags: TagSchemaRaw[] = []
 
-	if (data.author) {
-		author = data.author
-	}
 
 
     if (data.tags) {
@@ -24,10 +19,7 @@ export const transformContentCollection = async (contentCollectionData: ArticleC
         description: data.description,
         slug: contentCollectionData.slug,
         link: `/blog/${ contentCollectionData.slug }`,
-        date: data.date?.toDateString(),
-        imageSrc: data.imageSrc,
-        imageAlt: data.imageAlt,
-        author,
+        date: data.date?.toDateString() || '',
         tags,
         draft: data.draft,
         render: contentCollectionData.render,

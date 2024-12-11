@@ -6,7 +6,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import SquareCard from '../components/blog/SquareCard.astro';
 import TagCard from '../components/blog/TagDiv.astro';
 import { getArticles } from '../utils/routing';
-import { getEntry} from 'astro:content';
+import { getEntry } from 'astro:content';
 
 export const prerender = true;
 
@@ -26,6 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 const page = await getEntry({ collection: 'pages', slug: 'blog' });
+const title = page?.data?.title || page?.data?.seo?.title || 'Blog';
 console.log('page', page);
 
 const { paginateSize, blogRoot } = Config;
@@ -35,6 +36,8 @@ let currentPage = 1;
 if (Astro.params.page) {
 	currentPage = parseInt(Astro.params.page);
 }
+
+const pageTitle = currentPage > 1 ? `${title} - Page ${currentPage}` : title;
 
 const articles = await getArticles();
 const totalPages = Math.ceil(articles.length / paginateSize);
@@ -96,15 +99,14 @@ function generatePageLinks(
 	// Ensure uniqueness and limit to maxPageNumbersToShow
 	return Array.from(new Set(pageLinks)).slice(0, maxPageNumbersToShow + 2); // +2 for possible ellipses
 }
-
 ---
 
 <Layout
-	title={page?.data?.seo?.title || page?.data?.title || 'Blog'}
+	title={pageTitle}
 	seo={page?.data?.seo}
 	description={page?.data?.seo?.description || page?.data?.description}
 	config={Config}
-> 
+>
 	<h1 class="col-span-4 pb-8 text-center text-5xl font-bold xl:col-span-4">
 		Blog
 	</h1>

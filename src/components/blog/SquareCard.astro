@@ -96,15 +96,15 @@ const target = '_self';
 	</div>
 
 	{
-		article.imageSrc && (
+		article.seo?.featured_image && (
 			<a
 				href={`/blog/${article.slug}`}
 				target={target}
 				class="image-link relative aspect-[5/3]  h-auto w-full overflow-hidden rounded-none order-1"
 			>
 				<Image
-					src={article.imageSrc}
-					alt={article.imageAlt || 'Alt'}
+					src={article.seo.featured_image}
+					alt={article.seo.featured_image_alt || 'Alt'}
 					width="300"
 					height="200"
 					format="webp"
