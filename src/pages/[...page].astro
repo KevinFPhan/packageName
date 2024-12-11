@@ -6,7 +6,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import SquareCard from '../components/blog/SquareCard.astro';
 import TagCard from '../components/blog/TagDiv.astro';
 import { getArticles } from '../utils/routing';
-import { getEntry, getCollection } from 'astro:content';
+import { getEntry} from 'astro:content';
 
 export const prerender = true;
 
@@ -26,13 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 const page = await getEntry({ collection: 'pages', slug: 'blog' });
-const page2 = await getEntry('pages', 'blog');
-const page3 = await getCollection('pages');
-
-
 console.log('page', page);
-console.log('page2', page2);
-console.log('page3', page3);
 
 const { paginateSize, blogRoot } = Config;
 const includeSidebar = true;
@@ -106,9 +100,9 @@ function generatePageLinks(
 ---
 
 <Layout
-	title={page?.seo?.title || page?.title || 'Blog'}
-	seo={page?.seo}
-	description={page?.seo?.description || page?.description}
+	title={page?.data?.seo?.title || page?.data?.title || 'Blog'}
+	seo={page?.data?.seo}
+	description={page?.data?.seo?.description || page?.data?.description}
 	config={Config}
 > 
 	<h1 class="col-span-4 pb-8 text-center text-5xl font-bold xl:col-span-4">
