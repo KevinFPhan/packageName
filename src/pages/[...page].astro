@@ -6,6 +6,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import SquareCard from '../components/blog/SquareCard.astro';
 import TagCard from '../components/blog/TagDiv.astro';
 import { getArticles } from '../utils/routing';
+import { getEntry } from 'astro:content';
 
 export const prerender = true;
 
@@ -23,6 +24,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	return paths;
 };
+
+const page = await getEntry({ collection: 'pages', slug: '/blog/' });
+console.log('page', page);
 
 const { paginateSize, blogRoot } = Config;
 const includeSidebar = true;
@@ -97,11 +101,11 @@ function generatePageLinks(
 ---
 
 <Layout
-	title={currentPage === 1 ? 'Blog' : `Blog - Page ${currentPage}`}
-	seo={{ ...blogRoot?.seo }}
-	description={blogRoot?.description}
+	title={page?.seo?.title || page?.title || 'Blog'}
+	seo={page?.seo}
+	description={page?.seo?.description || page?.description}
 	config={Config}
->
+> 
 	<h1 class="col-span-4 pb-8 text-center text-5xl font-bold xl:col-span-4">
 		Blog
 	</h1>
