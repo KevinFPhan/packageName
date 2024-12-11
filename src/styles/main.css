@@ -1,18 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 html {
   scroll-behavior: smooth
-  
-  /* scroll-padding; */
+
 }
 body {
   @apply bg-gray-100
 }
 a.toc::after {
-  content: '';
-  @apply absolute bottom-1 left-1 h-1 w-[96%];
+  @apply absolute bottom-1 left-1 h-1 w-[96%] content-[/];
 }
 a.active.toc::after {
   @apply bg-gray-500 dark:bg-gray-400;
@@ -22,7 +16,7 @@ a.active.toc::after {
   @apply rounded-full px-3 py-0.5 text-sm;
 }
 .no-card {
-  border-radius: var(--rounded-box, 1rem);
+  @apply rounded-lg
 }
 
 .link-card a,
@@ -31,7 +25,7 @@ a {
 }
 
 .katex-display {
-  overflow-x: auto;
+  @apply overflow-x-auto
 }
 
 .medium-zoom-image--opened {
@@ -42,32 +36,28 @@ a {
   @apply rounded-xl;
 }
 
-.main-card p,
-.main-card li,
-.main-card blockquote {
-  a {
-    color: oklch(var(--p));
-    transition:
-      background-color 0.3s,
-      background-size 0.3s,
-      background-position 0.3s ease;
-    box-decoration-break: clone;
-    background-size: 100% 2px;
-    background-position: left bottom;
-    background-repeat: no-repeat;
-    @apply rounded-md px-0.5 font-medium;
-  }
 
-  a:hover {
-    background-color: oklch(var(--p) / 0.3);
-    background-size: 0% 2px;
-  }
-
-  a:active {
-    background-color: oklch(var(--p) / 0.2);
-    background-size: 0% 2px;
-  }
+.main-card p a, .main-card li a, .main-card blockquote a {
+	 color: oklch(var(--p));
+	 transition: background-color 0.3s, background-size 0.3s, background-position 0.3s ease;
+	 box-decoration-break: clone;
+	 background-size: 100% 2px;
+	 background-position: left bottom;
+	 background-repeat: no-repeat;
+	 border-radius: 6px;
+	 padding: 0 0.25rem;
+	 font-weight: 500;
 }
+ .main-card p a:hover, .main-card li a:hover, .main-card blockquote a:hover {
+	 background-color: oklch(var(--p) / 0.3);
+	 background-size: 0% 2px;
+}
+ .main-card p a:active, .main-card li a:active, .main-card blockquote a:active {
+	 background-color: oklch(var(--p) / 0.2);
+	 background-size: 0% 2px;
+}
+ 
+
 
 .alert,
 .collapse,
@@ -76,14 +66,12 @@ a {
 }
 
 summary {
-  list-style: none;
+  @apply list-none
 }
 
-a {
-  svg {
-    @apply inline-block;
+a svg {
     vertical-align: -0.25rem;
-  }
+    display: inline-block;
 }
 
 ol:not(.s) {
@@ -124,11 +112,11 @@ input {
     background-color 0.3s,
     color 0.3s,
     text-decoration 0.3s ease;
+}
 
-  svg {
+.anchor svg {
     @apply inline-block;
     vertical-align: -0.25rem;
-  }
 }
 
 .anchor:hover {
@@ -325,14 +313,48 @@ thead th {
 }
 
 
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.fade-in-up {
+	 opacity: 0;
+	 transform: translateY(50px);
+	 animation: fadeInUp 0.5s ease forwards;
 }
-
+ .fade-in-up:nth-child(1) {
+	 animation-delay: 0.1s;
+}
+ .fade-in-up:nth-child(2) {
+	 animation-delay: 0.2s;
+}
+ .fade-in-up:nth-child(3) {
+	 animation-delay: 0.3s;
+}
+ .fade-in-up:nth-child(4) {
+	 animation-delay: 0.4s;
+}
+ .fade-in-up:nth-child(5) {
+	 animation-delay: 0.5s;
+}
+ .fade-in-up:nth-child(6) {
+	 animation-delay: 0.6s;
+}
+ .fade-in-up:nth-child(7) {
+	 animation-delay: 0.7s;
+}
+ .fade-in-up:nth-child(8) {
+	 animation-delay: 0.8s;
+}
+ .fade-in-up:nth-child(9) {
+	 animation-delay: 0.9s;
+}
+ .fade-in-up:nth-child(10) {
+	 animation-delay: 1s;
+}
+ @keyframes fadeInUp {
+	 to {
+		 opacity: 1;
+		 transform: translateY(0);
+	}
+}
+ 
 html.dark {
 	 --pagefind-ui-primary: oklch(var(--nc));
 	 --pagefind-ui-text: oklch(var(--nc));
