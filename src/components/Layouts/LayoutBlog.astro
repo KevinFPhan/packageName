@@ -1,7 +1,6 @@
 ---
-// import '../../styles/styles.css';
-import '../../styles/main.css';
 import '../../styles/styles.css';
+import '../../styles/main.css';
 import { Image } from 'astro:assets';
 
 import Profile from '../../components/blog/ProfileCard.astro';
@@ -48,7 +47,6 @@ const { title, description, seo, config, site } =
 	Astro.props as AstroBlogLayoutProps;
 
 // const canonicalURL = new URL(seo?.canonical_url || title);
-// console.log('canonicalURL', canonicalURL);
 
 const { title: siteName, logo: configLogo } = config;
 ---
