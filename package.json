@@ -45,8 +45,7 @@
 		"preview": "astro preview",
 		"sync": "astro sync",
 		"astro": "astro",
-		"tailwind:build": "tailwind -o ./src/styles/styles.css -m",
-		"postinstall": "npm run tailwind:build"
+		"tailwind:build": "tailwind -o ./src/styles/styles.css -m"
 	},
 	"type": "module",
 	"dependencies": {
