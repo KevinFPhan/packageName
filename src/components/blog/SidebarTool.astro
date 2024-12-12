@@ -6,11 +6,11 @@ import ThemeIcon from './ThemeIcon.astro';
 	class="sticky top-[100px] w-full flex-col gap-4"
 	style="align-self: start;"
 >
-	<details
+	<div
 		class="mb-b card bg-base-100 fade-in-up menu flex max-h-[65vh] w-full overflow-hidden shadow-xl backdrop-blur-2xl transition-colors flex-col rounded-lg"
 	>
-		<summary
-			class="xl:hidden px-4 py-2 flex items-center bg-neutral-100/80 gap-2 text-lg font-medium"
+		<div
+			class="px-4 py-2 flex items-center bg-neutral-100/80 gap-2 text-lg font-medium cursor-pointer toc-btn lg:hidden"
 		>
 			<svg
 				class="w-6 h-6 duration-150 ease-out transition-all"
@@ -20,11 +20,11 @@ import ThemeIcon from './ThemeIcon.astro';
 			>
 				<path
 					d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-				></path></svg
-			>
-			Table of Contents</summary
-		>
-		<div class="p-4" id="content-box">
+				></path>
+			</svg>
+			Table of Contents
+		</div>
+		<div class="p-4 hidden lg:block" id="content-box">
 			<div class="skeleton h-4 w-28"></div>
 			<br />
 			<div class="skeleton h-4 w-full"></div>
@@ -34,9 +34,7 @@ import ThemeIcon from './ThemeIcon.astro';
 			<div class="skeleton h-4 w-full"></div>
 			<br />
 		</div>
-		<div></div>
-	</details>
-	<!-- <button class="toc-btn xl:hidden">Table of Contents</button> -->
+	</div>
 </div>
 
 <!-- <div
