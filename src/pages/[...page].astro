@@ -27,7 +27,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const page = await getEntry({ collection: 'pages', slug: 'blog' });
 const title = page?.data?.title || page?.data?.seo?.title || 'Blog';
-console.log('page', page);
 
 const { paginateSize, blogRoot } = Config;
 const includeSidebar = true;

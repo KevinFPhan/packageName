@@ -63,10 +63,10 @@ export const integration = defineIntegration({
                     updateConfig({
                         markdown: {
                             shikiConfig: {
-                                themes: {
-                                    light: "github-light",
-                                    dark: "github-dark",
-                                },
+                                // themes: {
+                                //     light: "github-light",
+                                //     dark: "github-dark",
+                                // },
                                 transformers: [
                                     {
                                         preprocess(code: string, { lang }: { lang?: string }) {

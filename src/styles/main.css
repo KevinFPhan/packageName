@@ -10,7 +10,7 @@ a.toc::after {
   @apply absolute bottom-1 left-1 h-1 w-[96%];
 }
 a.active.toc::after {
-  @apply bg-gray-500 dark:bg-gray-400;
+  @apply bg-transparent lg:bg-gray-500 dark:lg:bg-gray-400 dark:bg-transparent;
 }
 
 .badge {

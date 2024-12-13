@@ -26,6 +26,6 @@ export async function getArticles() {
         });
     }
 
-    console.log('blogArticles', blogArticles);
+    // console.log('blogArticles', blogArticles);
     return blogArticles;
 }
