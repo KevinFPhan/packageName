@@ -6,6 +6,7 @@ export default {
         './src/**/*.{astro,html,js,jsx,ts,tsx}',
         ...AstroBlogTailwindPaths,
     ],
+	darkMode: 'class', // or 'media' or 'class'
 	theme: {
 		extend: {},
 	},
