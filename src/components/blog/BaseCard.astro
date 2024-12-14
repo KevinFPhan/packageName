@@ -39,7 +39,7 @@ const hasTags = article.tags && article.tags.length > 0;
 ---
 
 <div
-	class={`card fade-in-up relative w-full overflow-hidden backdrop-blur-2xl shadow-xl transition-colors ${isBlog ? 'xl:max-w-screen-md blog' : ''}`}
+	class={`card fade-in-up blog-content relative w-full overflow-hidden backdrop-blur-2xl shadow-xl transition-colors ${isBlog ? 'xl:max-w-screen-md blog' : ''}`}
 	title={article.title}
 >
 	<!-- {
@@ -83,7 +83,7 @@ const hasTags = article.tags && article.tags.length > 0;
 									categories.map((category) => (
 										<a
 											href={`/blog/categories/${category}`}
-											class="tag badge btn-xs btn-secondary"
+											class="blog-cat tag badge btn-xs btn-secondary"
 										>
 											{category}
 										</a>
@@ -92,7 +92,7 @@ const hasTags = article.tags && article.tags.length > 0;
 									article.tags.map((tag) => (
 										<a
 											href={`/blog/tag/${tag}`}
-											class="btn btn-xs rounded-md dark:text-blue-300 dark:border-blue-400 border border-blue-500 px-2 py-[2px] text-xs text-blue-600"
+											class="blog-tag btn btn-xs rounded-md dark:text-blue-300 dark:border-blue-400 border border-blue-500 px-2 py-[2px] text-xs text-blue-600"
 										>
 											{tag}
 										</a>
