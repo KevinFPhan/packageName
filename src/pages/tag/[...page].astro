@@ -98,7 +98,7 @@ const pageLinks = generatePageLinks(totalPages, currentPage);
 				<h3 class="mb-5 tag-title">
 					Tags:
 					<span
-						class="rounded-md ml-1 inline-flex items-center justify-center bg-neutral-100/70 dark:bg-neutral-900/70  shadow-xl px-4 py-1 text-2xl font-medium text-gray-900  xl:text-3xl"
+						class="rounded-md ml-1 inline-flex items-center justify-center bg-neutral-100/70 dark:bg-neutral-900/70 shadow-xl px-4 py-1 text-2xl font-medium text-gray-900 xl:text-3xl"
 					>
 						{title}
 					</span>
@@ -126,8 +126,8 @@ const pageLinks = generatePageLinks(totalPages, currentPage);
 					<a
 						href={page.url.prev ? page.url.prev : `javascript:`}
 						class={page.url.prev
-							? `btn bg-base-100 dark:text-gray-50 hover:text-primary-500 transition-all duration-150 ease-out  flex items-center`
-							: `btn btn-disabled dark:text-gray-50 bg-base-100 hover:text-primary-500 transition-all duration-150 ease-out  flex items-center`}
+							? `btn bg-base-100 left-arrow dark:text-gray-50 hover:text-primary-500 transition-all duration-150 ease-out  flex items-center`
+							: `btn btn-disabled dark:text-gray-50 bg-base-100 hover:text-primary-500 transition-all duration-150 ease-out left-arrow  flex items-center`}
 					>
 						<svg
 							class="h-6 w-6 md:h-8 md:w-8"
@@ -147,8 +147,8 @@ const pageLinks = generatePageLinks(totalPages, currentPage);
 					<a
 						href={page.url.next ? page.url.next : `javascript:`}
 						class={page.url.next
-							? `btn  hover:text-primary-500 dark:text-gray-50 transition-all duration-150 ease-out   flex items-center`
-							: `btn btn-disabled  hover:text-primary-500 dark:text-gray-50 transition-all duration-150 ease-out border  flex items-center`}
+							? `btn  hover:text-primary-500 right-arrow dark:text-gray-50 transition-all duration-150 ease-out   flex items-center`
+							: `btn btn-disabled right-arrow  hover:text-primary-500 dark:text-gray-50 transition-all duration-150 ease-out border  flex items-center`}
 					>
 						<span class="ml-4 lg:inline">Next</span>
 						<svg
@@ -166,7 +166,7 @@ const pageLinks = generatePageLinks(totalPages, currentPage);
 					</a>
 				</div>
 				<div
-					class="join col-span-full flex gap-2 mt-4 justify-center w-full mx-auto"
+					class="join pagination col-span-full flex gap-2 mt-4 justify-center w-full mx-auto"
 				>
 					{
 						pageLinks.map((link, index) =>

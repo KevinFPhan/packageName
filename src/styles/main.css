@@ -96,6 +96,10 @@ input {
   @apply text-base;
 }
 
+.catalog li {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
 .anchor {
   @apply rounded-xl p-0.5 font-medium;
   margin-left: 4px;
